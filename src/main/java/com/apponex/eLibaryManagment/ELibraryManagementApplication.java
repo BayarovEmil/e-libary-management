@@ -1,6 +1,6 @@
 package com.apponex.eLibaryManagment;
 
-import com.apponex.eLibaryManagment.dataAccess.UserRepository;
+import com.apponex.eLibaryManagment.dataAccess.auth.UserRepository;
 import com.apponex.eLibaryManagment.core.entity.Role;
 import com.apponex.eLibaryManagment.core.entity.User;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +14,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @SpringBootApplication
-@EnableJpaAuditing
+@EnableJpaAuditing(auditorAwareRef = "auditorAware")
 @EnableAsync
 @RequiredArgsConstructor
 public class ELibraryManagementApplication {

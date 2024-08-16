@@ -1,2 +1,6 @@
-package com.apponex.eLibaryManagment.entity;public enum BookType {
+package com.apponex.eLibaryManagment.entity;
+
+public enum BookType {
+    ELECTRONIC,
+    PAPERBACK
 }

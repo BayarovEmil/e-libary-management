@@ -1,6 +1,6 @@
 package com.apponex.eLibaryManagment.core.security;
 
-import com.apponex.eLibaryManagment.dataAccess.UserRepository;
+import com.apponex.eLibaryManagment.dataAccess.auth.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;

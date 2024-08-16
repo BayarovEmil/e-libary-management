@@ -1,5 +1,6 @@
 package com.apponex.eLibaryManagment.core.entity;
 
+import com.apponex.eLibaryManagment.entity.Book;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -40,6 +41,9 @@ public class User implements UserDetails, Principal {
 
     @OneToMany(mappedBy = "user")
     private List<Token> tokens;
+
+    @OneToMany(mappedBy = "owner")
+    private List<Book> books;
 
     @CreatedDate
     @Column(updatable = false,nullable = false)

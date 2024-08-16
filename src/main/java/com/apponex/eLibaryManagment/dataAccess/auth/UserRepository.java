@@ -1,4 +1,4 @@
-package com.apponex.eLibaryManagment.dataAccess;
+package com.apponex.eLibaryManagment.dataAccess.auth;
 
 import com.apponex.eLibaryManagment.core.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;

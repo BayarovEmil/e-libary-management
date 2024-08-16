@@ -1,8 +1,8 @@
 package com.apponex.eLibaryManagment.business;
 
-import com.apponex.eLibaryManagment.dataAccess.ActivationCodeRepository;
-import com.apponex.eLibaryManagment.dataAccess.TokenRepository;
-import com.apponex.eLibaryManagment.dataAccess.UserRepository;
+import com.apponex.eLibaryManagment.dataAccess.auth.ActivationCodeRepository;
+import com.apponex.eLibaryManagment.dataAccess.auth.TokenRepository;
+import com.apponex.eLibaryManagment.dataAccess.auth.UserRepository;
 import com.apponex.eLibaryManagment.core.email.EmailService;
 import com.apponex.eLibaryManagment.core.email.EmailTemplateName;
 import com.apponex.eLibaryManagment.core.entity.*;

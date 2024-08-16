@@ -1,6 +1,6 @@
 package com.apponex.eLibaryManagment.core.security;
 
-import com.apponex.eLibaryManagment.dataAccess.TokenRepository;
+import com.apponex.eLibaryManagment.dataAccess.auth.TokenRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
