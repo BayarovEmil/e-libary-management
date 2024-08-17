@@ -15,10 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 @SpringBootApplication
 @EnableJpaAuditing(auditorAwareRef = "auditorAware")
-@EnableAsync
-@RequiredArgsConstructor
 public class ELibraryManagementApplication {
-	private final UserRepository userRepository;
 
 	public static void main(String[] args) {
 		SpringApplication.run(ELibraryManagementApplication.class, args);

@@ -1,5 +1,6 @@
 package com.apponex.eLibaryManagment.business;
 
+import com.apponex.eLibaryManagment.core.util.EmailSenderUtil;
 import com.apponex.eLibaryManagment.dataAccess.auth.ActivationCodeRepository;
 import com.apponex.eLibaryManagment.dataAccess.auth.TokenRepository;
 import com.apponex.eLibaryManagment.dataAccess.auth.UserRepository;
@@ -32,12 +33,10 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
-    private final EmailService emailService;
+    private final EmailSenderUtil emailSenderUtil;
 
-    @Value("${application.mailing.frontend.activation-url}")
-    private String activationUrl;
 
-    public void register(RegistrationRequest request) throws MessagingException {
+    public void register(RegistrationRequest request) {
         var user  = User.builder()
                 .firstname(request.firstname())
                 .lastname(request.lastname())
@@ -48,7 +47,7 @@ public class AuthenticationService {
                 .accountLocked(false)
                 .build();
         userRepository.save(user);
-        sendValidationEmail(user);
+        emailSenderUtil.sendValidationEmail(user);
     }
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
@@ -80,7 +79,7 @@ public class AuthenticationService {
         var activationCode = activationCodeRepository.findByCode(code)
                 .orElseThrow(()-> new EntityNotFoundException("Code not found!"));
         if (LocalDateTime.now().isAfter(activationCode.getExpiresAt())) {
-            sendValidationEmail(activationCode.getUser());
+            emailSenderUtil.sendValidationEmail(activationCode.getUser());
             throw new IllegalStateException("Activation code has been expired.We send new code your same mail.");
         }
 
@@ -94,40 +93,5 @@ public class AuthenticationService {
 
     }
 
-    private void sendValidationEmail(User user) throws MessagingException {
-        var generateCode = activateAndSaveCode(user);
 
-        emailService.sendEmail(
-                user.getEmail(),
-                user.getUsername(),
-                EmailTemplateName.ACTIVATE_ACCOUNT,
-                activationUrl,
-                generateCode,
-                "Account activation"
-        );
-    }
-
-    private String activateAndSaveCode(User user) {
-        var activationCode = generateActivationCode(6);
-
-        ActivationCode code = ActivationCode.builder()
-                .code(activationCode)
-                .user(user)
-                .createdAt(LocalDateTime.now())
-                .expiresAt(LocalDateTime.now().plusMinutes(15))
-                .build();
-        activationCodeRepository.save(code);
-        return activationCode;
-    }
-
-    private String generateActivationCode(int length) {
-        String characters="0123456789";
-        StringBuilder codeBuilder = new StringBuilder();
-        SecureRandom secureRandom = new SecureRandom();
-        for (int i=0;i<length;i++) {
-            int randomIndex = secureRandom.nextInt(characters.length());
-            codeBuilder.append(characters.charAt(randomIndex));
-        }
-        return codeBuilder.toString();
-    }
 }

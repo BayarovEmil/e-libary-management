@@ -13,6 +13,7 @@ import static com.apponex.eLibaryManagment.core.entity.Permission.*;
 @RequiredArgsConstructor
 public enum Role {
     USER(Collections.emptySet()),
+
     ADMIN(
             Set.of(
                     ADMIN_READ,
@@ -31,6 +32,14 @@ public enum Role {
                     MANAGER_UPDATE,
                     MANAGER_DELETE,
                     MANAGER_CREATE
+            )
+    ),
+    SELLER(
+            Set.of(
+                    SELLER_READ,
+                    SELLER_UPDATE,
+                    SELLER_DELETE,
+                    SELLER_CREATE
             )
     )
 

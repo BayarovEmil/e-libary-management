@@ -1,5 +1,6 @@
 package com.apponex.eLibaryManagment.core.security;
 
+import com.apponex.eLibaryManagment.core.entity.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,6 +32,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(req->
                         req
                                 .requestMatchers(WHITE_LIST_URL).permitAll().anyRequest().authenticated()
+//                                .requestMatchers("/user/**").hasRole(Role.USER.name())
                 )
                 .sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)
@@ -43,7 +45,8 @@ public class SecurityConfig {
         return security.build();
     }
 
-    private static final String[] WHITE_LIST_URL = {"/api/v1/auth/**",
+    private static final String[] WHITE_LIST_URL = {
+            "/auth/**",
             "/v2/api-docs",
             "/v3/api-docs",
             "/v3/api-docs/**",
@@ -53,7 +56,6 @@ public class SecurityConfig {
             "/configuration/security",
             "/swagger-ui/**",
             "/webjars/**",
-            "/swagger-ui.html",
-            "/auth/**"
+            "/swagger-ui.html"
     };
 }

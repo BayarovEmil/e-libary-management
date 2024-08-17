@@ -19,11 +19,16 @@ import org.springframework.web.bind.annotation.*;
 public class AuthenticationController {
     private final AuthenticationService authenticationService;
 
+    @GetMapping("/sayHello")
+    public String sayHello() {
+        return "Hello World!";
+    }
+
     @ResponseStatus(HttpStatus.ACCEPTED)
     @PostMapping("/register")
     public ResponseEntity<?> register(
             @Valid @RequestBody RegistrationRequest request
-    ) throws MessagingException {
+    ) {
         authenticationService.register(request);
         return ResponseEntity.accepted().build();
     }
