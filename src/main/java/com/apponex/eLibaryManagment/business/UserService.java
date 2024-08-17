@@ -7,6 +7,7 @@ import com.apponex.eLibaryManagment.dataAccess.auth.ActivationCodeRepository;
 import com.apponex.eLibaryManagment.dataAccess.auth.UserRepository;
 import com.apponex.eLibaryManagment.dto.user.ChangePasswordRequest;
 import com.apponex.eLibaryManagment.dto.user.UserResponse;
+import com.apponex.eLibaryManagment.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -23,15 +24,11 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final EmailSenderUtil emailSenderUtil;
     private final ActivationCodeRepository activationCodeRepository;
+    private final UserMapper userMapper;
 
     public UserResponse getUserInformation(Authentication connectedUser) {
         User user = (User) connectedUser.getPrincipal();
-        return UserResponse.builder()
-                .firstName(user.getFirstname())
-                .lastName(user.getLastname())
-                .email(user.getEmail())
-                .role(user.getRole().name())
-                .build();
+        return userMapper.toUserResponse(user);
     }
     public void changePassword(ChangePasswordRequest request, Authentication connectedUser) {
         User user = (User) connectedUser.getPrincipal();
