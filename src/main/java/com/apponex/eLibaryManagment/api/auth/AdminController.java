@@ -1,4 +1,4 @@
-package com.apponex.eLibaryManagment.api;
+package com.apponex.eLibaryManagment.api.auth;
 
 import com.apponex.eLibaryManagment.business.AdminService;
 import com.apponex.eLibaryManagment.core.common.PageResponse;

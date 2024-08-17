@@ -1,4 +1,4 @@
-package com.apponex.eLibaryManagment.api;
+package com.apponex.eLibaryManagment.api.auth;
 
 import com.apponex.eLibaryManagment.business.UserService;
 import com.apponex.eLibaryManagment.dto.user.ChangePasswordRequest;

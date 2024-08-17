@@ -1,4 +1,4 @@
-package com.apponex.eLibaryManagment.api;
+package com.apponex.eLibaryManagment.api.auth;
 
 import com.apponex.eLibaryManagment.business.AuthenticationService;
 import com.apponex.eLibaryManagment.dto.auth.AuthenticationRequest;
