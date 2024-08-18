@@ -1,4 +1,4 @@
-package com.apponex.eLibaryManagment.business;
+package com.apponex.eLibaryManagment.business.auth;
 
 import com.apponex.eLibaryManagment.core.common.PageResponse;
 import com.apponex.eLibaryManagment.core.entity.Role;

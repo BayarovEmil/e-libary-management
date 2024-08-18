@@ -1,13 +1,15 @@
-package com.apponex.eLibaryManagment.business;
+package com.apponex.eLibaryManagment.business.book;
 
 import com.apponex.eLibaryManagment.core.common.PageResponse;
 import com.apponex.eLibaryManagment.core.entity.User;
 import com.apponex.eLibaryManagment.core.file.FileStorageService;
 import com.apponex.eLibaryManagment.dataAccess.book.BookRepository;
+import com.apponex.eLibaryManagment.dataAccess.book.WalletOperationRepository;
 import com.apponex.eLibaryManagment.dto.book.BookRequest;
 import com.apponex.eLibaryManagment.dto.book.BookResponse;
 import com.apponex.eLibaryManagment.dto.book.UpdateBookRequest;
 import com.apponex.eLibaryManagment.entity.Book;
+import com.apponex.eLibaryManagment.entity.WalletOperation;
 import com.apponex.eLibaryManagment.mapper.BookMapper;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +32,7 @@ public class BookService {
     private final BookRepository bookRepository;
     private final BookMapper bookMapper;
     private final FileStorageService fileStorageService;
+    private final WalletOperationRepository walletOperationRepository;
     public ResponseEntity<BookResponse> createBook(BookRequest request, Authentication connectedUser) {
         User user = (User) connectedUser.getPrincipal();
         var book = bookMapper.toBook(request);
@@ -193,4 +196,14 @@ public class BookService {
     }
 
 
+    public BookResponse returnBook(Authentication connectedUser, Integer bookId) {
+        User user = (User) connectedUser.getPrincipal();
+        var book = bookRepository.findById(bookId)
+               .orElseThrow(()->new IllegalStateException("Book not found by id"));
+        WalletOperation operation = walletOperationRepository.findByBookId(bookId)
+                        .orElseThrow(()->new IllegalStateException("You cannot return this boook"));
+
+        bookRepository.save(book);
+        return bookMapper.toBookResponse(book);
+    }
 }

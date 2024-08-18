@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @Setter
@@ -18,24 +17,15 @@ import java.util.List;
 @NoArgsConstructor
 @SuperBuilder
 @Entity
-public class Book extends BaseEntity {
-    private String bookName;
-    private String authorName;
-    private LocalDate publicationYear;
-    private String description;
-    private int availableQuantity;
-    private double price;
-    private String genre;
-
-    private BookType type;
+public class Wallet extends BaseEntity {
+    private double balance;
     private boolean active;
-    private String cover;
 
-    @ManyToOne
-    @JoinColumn(name = "owner_id")
-    private User owner;
+    @OneToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
-    @OneToMany(mappedBy = "book")
+    @OneToMany(mappedBy = "wallet",cascade = CascadeType.ALL)
     private List<WalletOperation> walletOperations;
 
 }

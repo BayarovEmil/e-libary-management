@@ -1,6 +1,6 @@
 package com.apponex.eLibaryManagment.api.auth;
 
-import com.apponex.eLibaryManagment.business.AdminService;
+import com.apponex.eLibaryManagment.business.auth.AdminService;
 import com.apponex.eLibaryManagment.core.common.PageResponse;
 import com.apponex.eLibaryManagment.dto.user.UserResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;

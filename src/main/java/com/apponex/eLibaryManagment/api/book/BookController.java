@@ -1,6 +1,6 @@
-package com.apponex.eLibaryManagment.api;
+package com.apponex.eLibaryManagment.api.book;
 
-import com.apponex.eLibaryManagment.business.BookService;
+import com.apponex.eLibaryManagment.business.book.BookService;
 import com.apponex.eLibaryManagment.core.common.PageResponse;
 import com.apponex.eLibaryManagment.dto.book.BookRequest;
 import com.apponex.eLibaryManagment.dto.book.BookResponse;
@@ -116,6 +116,14 @@ public class BookController {
             @RequestParam double maxPrice
     ) {
         return ResponseEntity.ok(bookService.findBooksByPrice(page,size,minPrice,maxPrice));
+    }
+
+    @PatchMapping("/return/{book-id}")
+    public ResponseEntity<BookResponse> returnBook(
+            Authentication connectedUser,
+            @PathVariable("book-id") Integer bookId
+    ) {
+        return ResponseEntity.ok(bookService.returnBook(connectedUser,bookId));
     }
 
 }
