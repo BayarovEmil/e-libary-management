@@ -1,6 +1,6 @@
-package com.apponex.eLibaryManagment.dataAccess.book;
+package com.apponex.eLibaryManagment.dataAccess.operation;
 
-import com.apponex.eLibaryManagment.entity.WalletOperation;
+import com.apponex.eLibaryManagment.entity.wallet.WalletOperation;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

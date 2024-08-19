@@ -5,6 +5,8 @@ import com.apponex.eLibaryManagment.core.common.PageResponse;
 import com.apponex.eLibaryManagment.dto.book.BookRequest;
 import com.apponex.eLibaryManagment.dto.book.BookResponse;
 import com.apponex.eLibaryManagment.dto.book.UpdateBookRequest;
+import com.apponex.eLibaryManagment.dto.book.WalletResponse;
+import com.apponex.eLibaryManagment.dto.operation.BookTransactionResponse;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -118,12 +120,27 @@ public class BookController {
         return ResponseEntity.ok(bookService.findBooksByPrice(page,size,minPrice,maxPrice));
     }
 
-    @PatchMapping("/return/{book-id}")
+    @PostMapping("/buy/{book-id}")
+    public ResponseEntity<BookTransactionResponse> buyBook(
+            Authentication connectedUser,
+            @PathVariable("book-id") Integer bookId
+    ) {
+        return ResponseEntity.ok(bookService.buyBook(connectedUser, bookId));
+    }
+
+    @PostMapping("/return/{book-id}")
     public ResponseEntity<BookResponse> returnBook(
             Authentication connectedUser,
             @PathVariable("book-id") Integer bookId
     ) {
-        return ResponseEntity.ok(bookService.returnBook(connectedUser,bookId));
+        return ResponseEntity.ok(bookService.returnBook(connectedUser, bookId));
     }
 
+    @PostMapping("/approve/{book-id}")
+    public ResponseEntity<BookTransactionResponse> approveReturnedBook(
+            Authentication connectedUser,
+            @PathVariable("book-id") Integer bookId
+    ) {
+        return ResponseEntity.ok(bookService.approveReturnedBook(connectedUser, bookId));
+    }
 }

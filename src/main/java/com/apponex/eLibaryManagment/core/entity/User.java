@@ -1,7 +1,7 @@
 package com.apponex.eLibaryManagment.core.entity;
 
-import com.apponex.eLibaryManagment.entity.Book;
-import com.apponex.eLibaryManagment.entity.Wallet;
+import com.apponex.eLibaryManagment.entity.book.Book;
+import com.apponex.eLibaryManagment.entity.wallet.Wallet;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;

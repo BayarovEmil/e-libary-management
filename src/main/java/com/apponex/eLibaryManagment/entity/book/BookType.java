@@ -1,4 +1,4 @@
-package com.apponex.eLibaryManagment.entity;
+package com.apponex.eLibaryManagment.entity.book;
 
 public enum BookType {
     ELECTRONIC,

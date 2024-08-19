@@ -1,7 +1,5 @@
 package com.apponex.eLibaryManagment.dto.book;
 
-import com.apponex.eLibaryManagment.entity.BookType;
-
 import java.time.LocalDate;
 
 public record UpdateBookRequest(

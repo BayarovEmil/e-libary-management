@@ -1,4 +1,4 @@
-package com.apponex.eLibaryManagment.entity;
+package com.apponex.eLibaryManagment.entity.wallet;
 
 import com.apponex.eLibaryManagment.core.common.BaseEntity;
 import com.apponex.eLibaryManagment.core.entity.User;

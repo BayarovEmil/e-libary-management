@@ -1,6 +1,6 @@
 package com.apponex.eLibaryManagment.api.book;
 
-import com.apponex.eLibaryManagment.business.book.WalletService;
+import com.apponex.eLibaryManagment.business.operation.wallet.WalletService;
 import com.apponex.eLibaryManagment.core.common.PageResponse;
 import com.apponex.eLibaryManagment.dto.book.WalletOperationResponse;
 import com.apponex.eLibaryManagment.dto.book.WalletResponse;
@@ -48,14 +48,6 @@ public class WalletController {
         return ResponseEntity.ok(walletService.getWalletOperations(connectedUser,page,size));
     }
 
-    @PostMapping("/pay/{book-id}")
-    public ResponseEntity<WalletOperationResponse> buyWithWallet(
-            Authentication connectedUser,
-            @PathVariable("book-id") Integer bookId
-    ) {
-        return ResponseEntity.ok(walletService.buyWithWallet(connectedUser, bookId));
-    }
-
     @GetMapping("/getBookSellingHistory/{book-id}")
     public ResponseEntity<PageResponse<WalletOperationResponse>> getBookSellingHistory(
             Authentication connectedUser,
@@ -73,14 +65,6 @@ public class WalletController {
             @RequestParam(name = "size", defaultValue = "10", required = false) int size
     ) {
         return ResponseEntity.ok(walletService.getBookSellingAllHistory(connectedUser,page,size));
-    }
-
-    @PostMapping("/pay/{book-id}")
-    public ResponseEntity<WalletOperationResponse> reverseMoneyWithWallet(
-            Authentication connectedUser,
-            @PathVariable("book-id") Integer bookId
-    ) {
-        return ResponseEntity.ok(walletService.reverseMoneyWithWallet(connectedUser, bookId));
     }
 
 }

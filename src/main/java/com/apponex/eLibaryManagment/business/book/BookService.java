@@ -1,16 +1,19 @@
 package com.apponex.eLibaryManagment.business.book;
 
+import com.apponex.eLibaryManagment.business.operation.transaction.ITransactionService;
 import com.apponex.eLibaryManagment.core.common.PageResponse;
 import com.apponex.eLibaryManagment.core.entity.User;
+import com.apponex.eLibaryManagment.core.exception.OperationNotPermittedException;
 import com.apponex.eLibaryManagment.core.file.FileStorageService;
 import com.apponex.eLibaryManagment.dataAccess.book.BookRepository;
-import com.apponex.eLibaryManagment.dataAccess.book.WalletOperationRepository;
 import com.apponex.eLibaryManagment.dto.book.BookRequest;
 import com.apponex.eLibaryManagment.dto.book.BookResponse;
 import com.apponex.eLibaryManagment.dto.book.UpdateBookRequest;
-import com.apponex.eLibaryManagment.entity.Book;
-import com.apponex.eLibaryManagment.entity.WalletOperation;
+import com.apponex.eLibaryManagment.dto.book.WalletOperationResponse;
+import com.apponex.eLibaryManagment.dto.operation.BookTransactionResponse;
+import com.apponex.eLibaryManagment.entity.book.Book;
 import com.apponex.eLibaryManagment.mapper.BookMapper;
+import com.apponex.eLibaryManagment.mapper.WalletMapper;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -32,7 +35,8 @@ public class BookService {
     private final BookRepository bookRepository;
     private final BookMapper bookMapper;
     private final FileStorageService fileStorageService;
-    private final WalletOperationRepository walletOperationRepository;
+    private final ITransactionService transactionService;
+    private final WalletMapper walletMapper;
     public ResponseEntity<BookResponse> createBook(BookRequest request, Authentication connectedUser) {
         User user = (User) connectedUser.getPrincipal();
         var book = bookMapper.toBook(request);
@@ -195,15 +199,52 @@ public class BookService {
         );
     }
 
+    public BookTransactionResponse buyBook(Authentication connectedUser, Integer bookId) {
+        User user = (User) connectedUser.getPrincipal();
+        Book book = bookRepository.findById(bookId)
+                .orElseThrow(()->new IllegalStateException("Book not found by id"));
+        if (!book.isActive()) {
+            throw new OperationNotPermittedException("Book isn't already active");
+        }
+        if (book.getAvailableQuantity() <= 0) {
+            throw new OperationNotPermittedException("Book is out of stock");
+        }
+        if (Objects.equals(book.getOwner().getId(), user.getId())) {
+            throw new OperationNotPermittedException("You can't buy your own book");
+        }
+        WalletOperationResponse walletOperationResponse = transactionService.takeBook(user,book);
+        book.setAvailableQuantity(book.getAvailableQuantity()-1);
+        bookRepository.save(book);
+        return BookTransactionResponse.builder()
+                .walletOperationResponse(walletOperationResponse)
+                .build();
+    }
 
     public BookResponse returnBook(Authentication connectedUser, Integer bookId) {
         User user = (User) connectedUser.getPrincipal();
-        var book = bookRepository.findById(bookId)
-               .orElseThrow(()->new IllegalStateException("Book not found by id"));
-        WalletOperation operation = walletOperationRepository.findByBookId(bookId)
-                        .orElseThrow(()->new IllegalStateException("You cannot return this boook"));
-
+        Book book = bookRepository.findById(bookId)
+                .orElseThrow(()->new IllegalStateException("Book not found by id"));
+        if (Objects.equals(book.getOwner().getId(), user.getId())) {
+            throw new OperationNotPermittedException("You can't return your own book");
+        }
+        // check is book buying by user
+        book.setAvailableQuantity(book.getAvailableQuantity()+1);
         bookRepository.save(book);
         return bookMapper.toBookResponse(book);
+    }
+
+    public BookTransactionResponse approveReturnedBook(Authentication connectedUser, Integer bookId) {
+        User user = (User) connectedUser.getPrincipal();
+        Book book = bookRepository.findById(bookId)
+                .orElseThrow(()->new IllegalStateException("Book not found by id"));
+        if (!Objects.equals(book.getOwner().getId(), user.getId())) {
+            throw new OperationNotPermittedException("You can't approve returned book by other user");
+        }
+        book.setActive(true);
+        bookRepository.save(book);
+        WalletOperationResponse walletOperationResponse = transactionService.approveReturnedBook(user,book);
+        return BookTransactionResponse.builder()
+                .walletOperationResponse(walletOperationResponse)
+                .build();
     }
 }

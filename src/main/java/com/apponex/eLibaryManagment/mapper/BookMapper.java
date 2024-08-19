@@ -3,8 +3,7 @@ package com.apponex.eLibaryManagment.mapper;
 import com.apponex.eLibaryManagment.dto.book.BookRequest;
 import com.apponex.eLibaryManagment.dto.book.BookResponse;
 import com.apponex.eLibaryManagment.dto.book.UpdateBookRequest;
-import com.apponex.eLibaryManagment.entity.Book;
-import org.springframework.http.ResponseEntity;
+import com.apponex.eLibaryManagment.entity.book.Book;
 import org.springframework.stereotype.Service;
 
 @Service

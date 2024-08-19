@@ -1,7 +1,8 @@
 package com.apponex.eLibaryManagment.mapper;
 
 import com.apponex.eLibaryManagment.dto.book.WalletOperationResponse;
-import com.apponex.eLibaryManagment.entity.WalletOperation;
+import com.apponex.eLibaryManagment.entity.book.Book;
+import com.apponex.eLibaryManagment.entity.wallet.WalletOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,4 +22,12 @@ public class WalletOperationMapper {
                 .build();
     }
 
+    public WalletOperation toWalletOperation(Book book) {
+        return WalletOperation.builder()
+                .amount(-book.getPrice())
+                .book(book)
+                .sellerName(book.getOwner().getFirstname())
+                .wallet(book.getOwner().getWallet())
+                .build();
+    }
 }

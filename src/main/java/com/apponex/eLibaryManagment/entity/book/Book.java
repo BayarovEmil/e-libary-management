@@ -1,7 +1,8 @@
-package com.apponex.eLibaryManagment.entity;
+package com.apponex.eLibaryManagment.entity.book;
 
 import com.apponex.eLibaryManagment.core.common.BaseEntity;
 import com.apponex.eLibaryManagment.core.entity.User;
+import com.apponex.eLibaryManagment.entity.wallet.WalletOperation;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

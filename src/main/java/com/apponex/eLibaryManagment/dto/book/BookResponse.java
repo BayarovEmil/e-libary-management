@@ -1,6 +1,6 @@
 package com.apponex.eLibaryManagment.dto.book;
 
-import com.apponex.eLibaryManagment.entity.BookType;
+import com.apponex.eLibaryManagment.entity.book.BookType;
 import lombok.Builder;
 
 import java.time.LocalDate;

@@ -1,6 +1,8 @@
-package com.apponex.eLibaryManagment.entity;
+package com.apponex.eLibaryManagment.entity.operation;
 
 import com.apponex.eLibaryManagment.core.common.BaseEntity;
+import com.apponex.eLibaryManagment.core.entity.User;
+import com.apponex.eLibaryManagment.entity.book.Book;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -16,16 +18,15 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @SuperBuilder
 @Entity
-public class WalletOperation extends BaseEntity {
-
-    private double amount;
-    private String sellerName;
-
-    @ManyToOne
-    @JoinColumn(name = "wallet_id")
-    private Wallet wallet;
+public class Transaction extends BaseEntity {
+    private boolean returned;
+    private boolean returnApproved;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "transaction_id")
+    private User user;
+
+    @ManyToOne
+    @JoinColumn(name = "book_id")
     private Book book;
 }

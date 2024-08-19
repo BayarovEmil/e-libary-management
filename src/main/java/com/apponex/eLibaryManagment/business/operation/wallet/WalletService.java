@@ -1,16 +1,16 @@
-package com.apponex.eLibaryManagment.business.book;
+package com.apponex.eLibaryManagment.business.operation.wallet;
 
 import com.apponex.eLibaryManagment.core.common.PageResponse;
 import com.apponex.eLibaryManagment.core.entity.User;
 import com.apponex.eLibaryManagment.core.exception.OperationNotPermittedException;
 import com.apponex.eLibaryManagment.dataAccess.book.BookRepository;
-import com.apponex.eLibaryManagment.dataAccess.book.WalletOperationRepository;
+import com.apponex.eLibaryManagment.dataAccess.operation.WalletOperationRepository;
 import com.apponex.eLibaryManagment.dataAccess.book.WalletRepository;
 import com.apponex.eLibaryManagment.dto.book.WalletOperationResponse;
 import com.apponex.eLibaryManagment.dto.book.WalletResponse;
-import com.apponex.eLibaryManagment.entity.Book;
-import com.apponex.eLibaryManagment.entity.Wallet;
-import com.apponex.eLibaryManagment.entity.WalletOperation;
+import com.apponex.eLibaryManagment.entity.book.Book;
+import com.apponex.eLibaryManagment.entity.wallet.Wallet;
+import com.apponex.eLibaryManagment.entity.wallet.WalletOperation;
 import com.apponex.eLibaryManagment.mapper.UserMapper;
 import com.apponex.eLibaryManagment.mapper.WalletMapper;
 import com.apponex.eLibaryManagment.mapper.WalletOperationMapper;
@@ -27,7 +27,7 @@ import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
-public class WalletService {
+public class WalletService implements IWalletService {
     private final WalletRepository walletRepository;
     private final WalletOperationRepository walletOperationRepository;
     private final UserMapper userMapper;
@@ -89,38 +89,6 @@ public class WalletService {
         );
     }
 
-    public WalletOperationResponse buyWithWallet(Authentication connectedUser, Integer bookId) {
-        User user = (User) connectedUser.getPrincipal();
-        Book book = bookRepository.findById(bookId)
-                .orElseThrow(()->new IllegalStateException("Book not found by id"));
-        // Check if user has sufficient balance
-        Wallet wallet = walletRepository.findByUserId(user.getId())
-               .orElseThrow(()->new IllegalStateException("Wallet not found"));
-        // Check if user has sufficient balance
-        if (wallet.getBalance() < book.getPrice()) {
-            throw new OperationNotPermittedException("Insufficient funds in wallet");
-        }
-        // Decrease user's wallet balance
-        wallet.setBalance(wallet.getBalance() - book.getPrice());
-        walletRepository.save(wallet);
-        walletRepository.save(book.getOwner().getWallet()).setBalance(wallet.getBalance() + book.getPrice());
-
-        // decrease book quantities
-        book.setAvailableQuantity(book.getAvailableQuantity() - 1);
-        bookRepository.save(book);
-        // Create wallet operation for purchase
-        WalletOperation walletOperation = WalletOperation.builder()
-               .amount(-book.getPrice())
-                .book(book)
-                .sellerName(book.getOwner().getFirstname())
-               .wallet(wallet)
-               .build();
-        walletOperationRepository.save(walletOperation);
-        // Return wallet operation response
-        return walletOperationMapper.walletOperationResponse(walletOperation);
-    }
-
-
     public PageResponse<WalletOperationResponse> getBookSellingHistoryByBookId(Authentication connectedUser, Integer bookId, int page, int size) {
         User user = (User) connectedUser.getPrincipal();
         Pageable pageable = PageRequest.of(page,size,Sort.by("createdDate").descending());
@@ -164,34 +132,41 @@ public class WalletService {
         );
     }
 
-    public WalletOperationResponse reverseMoneyWithWallet(Authentication connectedUser, Integer bookId) {
-        User user = (User) connectedUser.getPrincipal();
-        Book book = bookRepository.findById(bookId)
-                .orElseThrow(()->new IllegalStateException("Book not found by id"));
-        // Check if user has sufficient balance
-        Wallet wallet = walletRepository.findByUserId(user.getId())
+
+    @Override
+    public WalletOperationResponse buyWithWallet(User user, Book book) {
+        Wallet ownWallet = walletRepository.findByUserId(user.getId())
                 .orElseThrow(()->new IllegalStateException("Wallet not found"));
-        // Check if user has sufficient balance
-        if (wallet.getBalance() < book.getPrice()) {
+        if (ownWallet.getBalance() < book.getPrice()) {
             throw new OperationNotPermittedException("Insufficient funds in wallet");
         }
-        // Decrease user's wallet balance
-        wallet.setBalance(wallet.getBalance() + book.getPrice());
-        walletRepository.save(wallet);
-        walletRepository.save(book.getOwner().getWallet()).setBalance(wallet.getBalance() - book.getPrice());
-
-        // decrease book quantities
-        book.setAvailableQuantity(book.getAvailableQuantity() - 1);
-        bookRepository.save(book);
-        // Create wallet operation for purchase
-        WalletOperation walletOperation = WalletOperation.builder()
-                .amount(-book.getPrice())
-                .book(book)
-                .sellerName(book.getOwner().getFirstname())
-                .wallet(wallet)
-                .build();
+        ownWallet.setBalance(ownWallet.getBalance() - book.getPrice());
+        walletRepository.save(ownWallet);
+        Wallet sellerWallet = walletRepository.findByUserId(user.getId())
+                .orElseThrow(()->new IllegalStateException("Wallet not found"));
+        sellerWallet.setBalance(sellerWallet.getBalance() + book.getPrice());
+        walletRepository.save(sellerWallet);
+        var walletOperation = walletOperationMapper.toWalletOperation(book);
         walletOperationRepository.save(walletOperation);
-        // Return wallet operation response
         return walletOperationMapper.walletOperationResponse(walletOperation);
     }
+
+    @Override
+    public WalletOperationResponse returnMoney(User user, Book book) {
+        Wallet ownWallet = walletRepository.findByUserId(user.getId())
+                .orElseThrow(()->new IllegalStateException("Wallet not found"));
+        ownWallet.setBalance(ownWallet.getBalance() + book.getPrice());
+        walletRepository.save(ownWallet);
+        Wallet sellerWallet = walletRepository.findByUserId(user.getId())
+                .orElseThrow(()->new IllegalStateException("Wallet not found"));
+        sellerWallet.setBalance(sellerWallet.getBalance() - book.getPrice());
+        walletRepository.save(sellerWallet);
+        var walletOperation = walletOperationMapper.toWalletOperation(book);
+        walletOperationRepository.save(walletOperation);
+        return walletOperationMapper.walletOperationResponse(walletOperation);
+    }
+
+
+
+
 }

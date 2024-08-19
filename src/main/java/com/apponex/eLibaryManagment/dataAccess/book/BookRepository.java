@@ -1,7 +1,7 @@
 package com.apponex.eLibaryManagment.dataAccess.book;
 
 import com.apponex.eLibaryManagment.core.entity.User;
-import com.apponex.eLibaryManagment.entity.Book;
+import com.apponex.eLibaryManagment.entity.book.Book;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
