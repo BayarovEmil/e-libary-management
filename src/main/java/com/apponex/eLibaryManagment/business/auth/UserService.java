@@ -7,7 +7,7 @@ import com.apponex.eLibaryManagment.dataAccess.auth.ActivationCodeRepository;
 import com.apponex.eLibaryManagment.dataAccess.auth.UserRepository;
 import com.apponex.eLibaryManagment.dto.user.ChangePasswordRequest;
 import com.apponex.eLibaryManagment.dto.user.UserResponse;
-import com.apponex.eLibaryManagment.mapper.UserMapper;
+import com.apponex.eLibaryManagment.mapper.user.UserMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;

@@ -1,4 +1,4 @@
-package com.apponex.eLibaryManagment.mapper;
+package com.apponex.eLibaryManagment.mapper.book;
 
 import com.apponex.eLibaryManagment.dto.book.BookRequest;
 import com.apponex.eLibaryManagment.dto.book.BookResponse;

@@ -1,7 +1,9 @@
-package com.apponex.eLibaryManagment.mapper;
+package com.apponex.eLibaryManagment.mapper.wallet;
 
 import com.apponex.eLibaryManagment.dto.book.WalletResponse;
 import com.apponex.eLibaryManagment.entity.wallet.Wallet;
+import com.apponex.eLibaryManagment.mapper.user.UserMapper;
+import com.apponex.eLibaryManagment.mapper.book.BookMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

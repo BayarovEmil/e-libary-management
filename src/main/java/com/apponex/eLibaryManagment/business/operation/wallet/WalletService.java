@@ -1,5 +1,7 @@
 package com.apponex.eLibaryManagment.business.operation.wallet;
 
+import com.apponex.eLibaryManagment.business.cargo.CargoService;
+import com.apponex.eLibaryManagment.business.cargo.ICargoService;
 import com.apponex.eLibaryManagment.core.common.PageResponse;
 import com.apponex.eLibaryManagment.core.entity.User;
 import com.apponex.eLibaryManagment.core.exception.OperationNotPermittedException;
@@ -8,12 +10,13 @@ import com.apponex.eLibaryManagment.dataAccess.operation.WalletOperationReposito
 import com.apponex.eLibaryManagment.dataAccess.book.WalletRepository;
 import com.apponex.eLibaryManagment.dto.book.WalletOperationResponse;
 import com.apponex.eLibaryManagment.dto.book.WalletResponse;
+import com.apponex.eLibaryManagment.dto.cargo.CargoResponse;
 import com.apponex.eLibaryManagment.entity.book.Book;
 import com.apponex.eLibaryManagment.entity.wallet.Wallet;
 import com.apponex.eLibaryManagment.entity.wallet.WalletOperation;
-import com.apponex.eLibaryManagment.mapper.UserMapper;
-import com.apponex.eLibaryManagment.mapper.WalletMapper;
-import com.apponex.eLibaryManagment.mapper.WalletOperationMapper;
+import com.apponex.eLibaryManagment.mapper.user.UserMapper;
+import com.apponex.eLibaryManagment.mapper.wallet.WalletMapper;
+import com.apponex.eLibaryManagment.mapper.wallet.WalletOperationMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -34,7 +37,7 @@ public class WalletService implements IWalletService {
     private final WalletOperationMapper walletOperationMapper;
     private final WalletMapper walletMapper;
     private final BookRepository bookRepository;
-
+    private final ICargoService cargoService;
     public WalletResponse getWalletInformation(Authentication connectedUser) {
         User user = (User) connectedUser.getPrincipal();
         var wallet = walletRepository.findByUserId(user.getId())
@@ -137,10 +140,11 @@ public class WalletService implements IWalletService {
     public WalletOperationResponse buyWithWallet(User user, Book book) {
         Wallet ownWallet = walletRepository.findByUserId(user.getId())
                 .orElseThrow(()->new IllegalStateException("Wallet not found"));
-        if (ownWallet.getBalance() < book.getPrice()) {
+        var order = cargoService.takeOrder(user,book);
+        if (ownWallet.getBalance() < book.getPrice() + order.shippingCost()) {
             throw new OperationNotPermittedException("Insufficient funds in wallet");
         }
-        ownWallet.setBalance(ownWallet.getBalance() - book.getPrice());
+        ownWallet.setBalance(ownWallet.getBalance() - ( book.getPrice() + order.shippingCost() ) );
         walletRepository.save(ownWallet);
         Wallet sellerWallet = walletRepository.findByUserId(user.getId())
                 .orElseThrow(()->new IllegalStateException("Wallet not found"));
@@ -155,7 +159,8 @@ public class WalletService implements IWalletService {
     public WalletOperationResponse returnMoney(User user, Book book) {
         Wallet ownWallet = walletRepository.findByUserId(user.getId())
                 .orElseThrow(()->new IllegalStateException("Wallet not found"));
-        ownWallet.setBalance(ownWallet.getBalance() + book.getPrice());
+        var order = cargoService.takeOrder(user,book);
+        ownWallet.setBalance(ownWallet.getBalance() - ( book.getPrice() + order.shippingCost() ) );
         walletRepository.save(ownWallet);
         Wallet sellerWallet = walletRepository.findByUserId(user.getId())
                 .orElseThrow(()->new IllegalStateException("Wallet not found"));

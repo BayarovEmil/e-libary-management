@@ -1,4 +1,4 @@
-package com.apponex.eLibaryManagment.mapper;
+package com.apponex.eLibaryManagment.mapper.user;
 
 import com.apponex.eLibaryManagment.core.entity.User;
 import com.apponex.eLibaryManagment.dto.user.UserResponse;

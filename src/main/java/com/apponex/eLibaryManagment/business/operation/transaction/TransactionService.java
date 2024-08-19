@@ -1,5 +1,6 @@
 package com.apponex.eLibaryManagment.business.operation.transaction;
 
+import com.apponex.eLibaryManagment.business.cargo.ICargoService;
 import com.apponex.eLibaryManagment.business.operation.wallet.IWalletService;
 import com.apponex.eLibaryManagment.core.entity.User;
 import com.apponex.eLibaryManagment.dataAccess.operation.TransactionRepository;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 public class TransactionService implements ITransactionService {
     private final TransactionRepository transactionRepository;
     private final IWalletService walletService;
+    private final ICargoService cargoService;
 
     @Override
     public WalletOperationResponse takeBook(User user, Book book) {

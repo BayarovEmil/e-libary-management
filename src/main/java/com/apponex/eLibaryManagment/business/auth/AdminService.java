@@ -5,7 +5,7 @@ import com.apponex.eLibaryManagment.core.entity.Role;
 import com.apponex.eLibaryManagment.core.entity.User;
 import com.apponex.eLibaryManagment.dataAccess.auth.UserRepository;
 import com.apponex.eLibaryManagment.dto.user.UserResponse;
-import com.apponex.eLibaryManagment.mapper.UserMapper;
+import com.apponex.eLibaryManagment.mapper.user.UserMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
