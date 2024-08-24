@@ -41,8 +41,8 @@ public class TransactionService implements ITransactionService {
 
     @Override
     public WalletOperationResponse approveReturnedBook(User user, Book book) {
-        var transaction = transactionRepository.isUserReturnThisBook(user.getId(),book.getId())
-                .orElseThrow(() -> new IllegalStateException("No transaction found for this book"));
+        var transaction = transactionRepository.isUserReturnThisBook(book.getId())
+                .orElseThrow(() -> new IllegalStateException("No transaction found for this book::"+book.getId()));
         transaction.setReturnApproved(true);
         return walletService.returnMoney(user, book);
     }

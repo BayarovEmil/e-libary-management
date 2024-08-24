@@ -33,6 +33,9 @@ public class SecurityConfig {
                         req
                                 .requestMatchers(WHITE_LIST_URL).permitAll().anyRequest().authenticated()
 //                                .requestMatchers("/user/**").hasRole(Role.USER.name())
+//                                .requestMatchers("/seller/**").hasRole(Role.SELLER.name())
+//                                .requestMatchers("/admin/**").hasRole(Role.ADMIN.name())
+//                                .requestMatchers("/manager/**").hasRole(Role.MANAGER.name())
                 )
                 .sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)

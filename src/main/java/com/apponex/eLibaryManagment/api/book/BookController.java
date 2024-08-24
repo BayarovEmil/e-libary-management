@@ -74,7 +74,7 @@ public class BookController {
         return ResponseEntity.accepted().build();
     }
 
-    @GetMapping("/find/{book-name}")
+    @GetMapping("/find/name/{book-name}")
     public ResponseEntity<PageResponse<BookResponse>> findBooksByName(
             @RequestParam(name = "page", defaultValue = "0", required = false) int page,
             @RequestParam(name = "size", defaultValue = "10", required = false) int size,
@@ -83,7 +83,7 @@ public class BookController {
         return ResponseEntity.ok(bookService.findBooksByName(page,size,bookName));
     }
 
-    @GetMapping("/find/{book-author}")
+    @GetMapping("/find/author/{book-author}")
     public ResponseEntity<PageResponse<BookResponse>> findBooksByAuthorName(
             @RequestParam(name = "page", defaultValue = "0", required = false) int page,
             @RequestParam(name = "size", defaultValue = "10", required = false) int size,
@@ -92,7 +92,7 @@ public class BookController {
         return ResponseEntity.ok(bookService.findBooksByAuthorName(page,size,bookName));
     }
 
-    @GetMapping("/find/{book-genre}")
+    @GetMapping("/find/genre/{book-genre}")
     public ResponseEntity<PageResponse<BookResponse>> findBooksByGenre(
             @RequestParam(name = "page", defaultValue = "0", required = false) int page,
             @RequestParam(name = "size", defaultValue = "10", required = false) int size,
@@ -101,7 +101,7 @@ public class BookController {
         return ResponseEntity.ok(bookService.findBooksByGenre(page,size,bookName));
     }
 
-    @GetMapping("/find/{book-owner}")
+    @GetMapping("/find/owner/{book-owner}")
     public ResponseEntity<PageResponse<BookResponse>> findBooksByOwner(
             @RequestParam(name = "page", defaultValue = "0", required = false) int page,
             @RequestParam(name = "size", defaultValue = "10", required = false) int size,

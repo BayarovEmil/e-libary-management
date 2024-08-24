@@ -16,4 +16,14 @@ public class TrackingMapper {
                 .deliveryDate(tracker.getDeliveryDate())
                 .build();
     }
+
+    public Tracker toTracker(TrackingResponse tracker) {
+        return Tracker.builder()
+                .trackingNumber(tracker.trackingNumber())
+                .shippingCost(tracker.shippingCost())
+                .trackingStatus(tracker.trackingStatus())
+                .orderingDate(tracker.orderDate())
+                .deliveryDate(tracker.deliveryDate())
+                .build();
+    }
 }

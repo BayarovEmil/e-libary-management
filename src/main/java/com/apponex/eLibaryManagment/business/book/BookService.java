@@ -53,12 +53,12 @@ public class BookService {
 
     public PageResponse<BookResponse> readOwnBooks(int page, int size, Authentication connectedUser) {
         User user = (User) connectedUser.getPrincipal();
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
         Page<Book> books = bookRepository.findAllByOwner(pageable, user)
                 .orElseThrow(()->new IllegalStateException("No books found by this user"));
         List<BookResponse> bookResponses = books.stream()
                 .map(bookMapper::toBookResponse)
-                .collect(Collectors.toList());
+                .toList();
         return new PageResponse<>(
                 bookResponses,
                 books.getNumber(),
@@ -71,7 +71,7 @@ public class BookService {
     }
 
     public PageResponse<BookResponse> readAllBooks(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
         Page<Book> books = bookRepository.findAll(pageable);
         List<BookResponse> bookResponses = books.stream()
                 .map(bookMapper::toBookResponse)
@@ -110,7 +110,7 @@ public class BookService {
     }
 
     public PageResponse<BookResponse> findBooksByName(int page, int size, String bookName) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
         Page<Book> books = bookRepository.findAllByBookName(pageable,bookName)
                 .orElseThrow(()->new IllegalStateException("No books found by this name"));
         List<BookResponse> bookResponses = books.stream()
@@ -128,7 +128,7 @@ public class BookService {
     }
 
     public PageResponse<BookResponse> findBooksByAuthorName(int page, int size, String authorName) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
         Page<Book> books = bookRepository.findAllByAuthorName(pageable, authorName)
                 .orElseThrow(()->new IllegalStateException("No books found by this author"));
         List<BookResponse> bookResponses = books.stream()
@@ -146,7 +146,7 @@ public class BookService {
     }
 
     public PageResponse<BookResponse> findBooksByGenre(int page, int size, String bookName) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
         Page<Book> books = bookRepository.findAllByGenre(pageable, bookName)
                 .orElseThrow(()->new IllegalStateException("No books found by this author"));
         List<BookResponse> bookResponses = books.stream()
@@ -164,7 +164,7 @@ public class BookService {
     }
 
     public PageResponse<BookResponse> findBooksByOwner(int page, int size, String bookOwnerName) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
         Page<Book> books = bookRepository.findAllByOwnerFirstname(pageable, bookOwnerName)
                 .orElseThrow(()->new IllegalStateException("No books found by this author"));
         List<BookResponse> bookResponses = books.stream()
@@ -182,7 +182,7 @@ public class BookService {
     }
 
     public PageResponse<BookResponse> findBooksByPrice(int page, int size, double minPrice, double maxPrice) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
         Page<Book> books = bookRepository.findAllByPriceGreaterThanEqualAndPriceLessThanEqual(pageable, minPrice, maxPrice)
                 .orElseThrow(()->new IllegalStateException("No books found by this price range"));
         List<BookResponse> bookResponses = books.stream()
@@ -230,6 +230,7 @@ public class BookService {
         // check is book buying by user
         book.setAvailableQuantity(book.getAvailableQuantity()+1);
         bookRepository.save(book);
+        transactionService.returnBook(user, book);
         return bookMapper.toBookResponse(book);
     }
 

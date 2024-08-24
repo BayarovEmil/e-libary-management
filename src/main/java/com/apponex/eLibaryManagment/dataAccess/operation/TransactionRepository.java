@@ -21,10 +21,9 @@ public interface TransactionRepository extends JpaRepository<Transaction,Integer
     @Query("""
             select transaction
             from Transaction transaction
-            where transaction.user.id=:userId
-            and transaction.book.id=:bookId
+            where transaction.book.id=:bookId
             and transaction.returned=true
             and transaction.returnApproved=false
            """)
-    Optional<Transaction> isUserReturnThisBook(Integer userId, Integer bookId);
+    Optional<Transaction> isUserReturnThisBook(Integer bookId);
 }

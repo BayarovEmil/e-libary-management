@@ -11,6 +11,7 @@ import com.apponex.eLibaryManagment.dataAccess.book.WalletRepository;
 import com.apponex.eLibaryManagment.dto.book.WalletOperationResponse;
 import com.apponex.eLibaryManagment.dto.book.WalletResponse;
 import com.apponex.eLibaryManagment.dto.cargo.CargoResponse;
+import com.apponex.eLibaryManagment.dto.cargo.TrackingResponse;
 import com.apponex.eLibaryManagment.entity.book.Book;
 import com.apponex.eLibaryManagment.entity.wallet.Wallet;
 import com.apponex.eLibaryManagment.entity.wallet.WalletOperation;
@@ -61,7 +62,8 @@ public class WalletService implements IWalletService {
         Wallet wallet = Wallet.builder()
                .balance(25.0)
                .build();
-        return walletMapper.walletResponse(wallet);
+        wallet.setUser(user);
+        return walletMapper.walletResponse(walletRepository.save(wallet));
     }
 
     public WalletResponse increaseWalletBalance(Authentication connectedUser, double amount) {
@@ -75,7 +77,7 @@ public class WalletService implements IWalletService {
 
     public PageResponse<WalletOperationResponse> getWalletOperations(Authentication connectedUser, int page, int size) {
         User user = (User) connectedUser.getPrincipal();
-        Pageable pageable = PageRequest.of(page,size, Sort.by("createdDate").descending());
+        Pageable pageable = PageRequest.of(page,size, Sort.by("createdAt").descending());
         Page<WalletOperation> walletOperations = walletOperationRepository.findAllByWalletUserId(pageable,user.getId())
                 .orElseThrow(()->new IllegalStateException("Could not find"));
         List<WalletOperationResponse> walletOperationResponses = walletOperations.stream()
@@ -94,12 +96,12 @@ public class WalletService implements IWalletService {
 
     public PageResponse<WalletOperationResponse> getBookSellingHistoryByBookId(Authentication connectedUser, Integer bookId, int page, int size) {
         User user = (User) connectedUser.getPrincipal();
-        Pageable pageable = PageRequest.of(page,size,Sort.by("createdDate").descending());
+        Pageable pageable = PageRequest.of(page,size,Sort.by("createdAt").descending());
         Book book = bookRepository.findById(bookId)
                .orElseThrow(()->new IllegalStateException("Book not found by id"));
-        if (Objects.equals(book.getOwner().getId(),user.getId())) {
-            throw new OperationNotPermittedException("User is not allowed to view book selling history");
-        }
+//        if (Objects.equals(book.getOwner().getId(),user.getId())) {
+//            throw new OperationNotPermittedException("User is not allowed to view book selling history");
+//        }
         Page<WalletOperation> walletOperations = walletOperationRepository.findAllByBookId(pageable,book.getId())
                .orElseThrow(()->new IllegalStateException("Could not find operation by id"));
         List<WalletOperationResponse> walletOperationResponses = walletOperations.stream()
@@ -118,7 +120,7 @@ public class WalletService implements IWalletService {
 
     public PageResponse<WalletOperationResponse> getBookSellingAllHistory(Authentication connectedUser, int page, int size) {
         User user = (User) connectedUser.getPrincipal();
-        Pageable pageable = PageRequest.of(page,size,Sort.by("createdDate").descending());
+        Pageable pageable = PageRequest.of(page,size,Sort.by("createdAt").descending());
         Page<WalletOperation> walletOperations = walletOperationRepository.findAllByWalletUserId(pageable, user.getId())
                 .orElseThrow(()->new IllegalStateException("Could not find operation by id"));
         List<WalletOperationResponse> walletOperationResponses = walletOperations.stream()
@@ -140,7 +142,7 @@ public class WalletService implements IWalletService {
     public WalletOperationResponse buyWithWallet(User user, Book book) {
         Wallet ownWallet = walletRepository.findByUserId(user.getId())
                 .orElseThrow(()->new IllegalStateException("Wallet not found"));
-        var order = cargoService.takeOrder(user,book);
+        TrackingResponse order = cargoService.takeOrder(user,book);
         if (ownWallet.getBalance() < book.getPrice() + order.shippingCost()) {
             throw new OperationNotPermittedException("Insufficient funds in wallet");
         }

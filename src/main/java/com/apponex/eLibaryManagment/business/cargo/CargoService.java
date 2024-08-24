@@ -57,7 +57,7 @@ public class CargoService implements ICargoService{
     }
 
     public PageResponse<CargoResponse> readAllCargoCompany(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
         Page<Cargo> cargos = cargoRepository.findAll(pageable);
         List<CargoResponse> cargoResponses = cargos.stream()
                 .map(cargoMapper::toCargoResponse)
@@ -83,6 +83,7 @@ public class CargoService implements ICargoService{
                 .trackingNumber(trackingNumber)
                 .shippingCost(shippingCost)
                 .build();
+        tracker.setCargo(Cargo.builder().id(1).build());
         return trackingMapper.toTrackingResponse(trackerRepository.save(tracker));
     }
 
